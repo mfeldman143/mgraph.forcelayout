@@ -1,0 +1,60 @@
+{
+  "name": "mgraph.forcelayout",
+  "version": "3.3.1",
+  "description": "Force directed graph drawing layout",
+  "main": "index.js",
+  "jsdelivr": "dist/mgraph.forcelayout.min.js",
+  "unpkg": "dist/mgraph.forcelayout.min.js",
+  "types": "./index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "bench": "node benchmarks/code-generators.bench.js",
+    "lint": "eslint .",
+    "perf": "npm version && node perf/test.js",
+    "build": "browserify index.js -s mgraphCreateLayout -o dist/mgraph.forcelayout.js && terser --compress -o dist/mgraph.forcelayout.min.js -- dist/mgraph.forcelayout.js",
+    "build2d": "browserify index.js -t ./inline-transform.js -s mgraphCreate2dLayout > dist/mgraph.forcelayout2d.js && terser --compress -o dist/mgraph.forcelayout2d.min.js -- dist/mgraph.forcelayout2d.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mfeldman143/mgraph.forcelayout.git"
+  },
+  "keywords": [
+    "mgraph",
+    "graph",
+    "layout",
+    "force",
+    "forcelayout"
+  ],
+  "author": "Michael Feldman",
+  "contributors": [
+    {
+      "name": "Andrei Kashcha",
+      "url": "https://github.com/anvaka",
+      "note": "Original author of ngraph.forcelayout"
+    }
+  ],
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/mfeldman143/mgraph.forcelayout/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "benchmark": "2.1.4",
+    "browserify": "^17.0.0",
+    "eslint": "9.20.1",
+    "mgraph.generators": "^1.0.0",
+    "mgraph.graph": "^1.0.0",
+    "tap": "^21.0.2",
+    "terser": "^5.3.0",
+    "through2": "^4.0.2",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "mgraph.events": "^1.0.0",
+    "mgraph.merge": "^1.0.0",
+    "mgraph.random": "^1.0.0"
+  }
+}
