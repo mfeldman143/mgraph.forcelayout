@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>Debug UMD Loading</h1>
+    <div id="output"></div>
+
+    <script>
+        // Catch all JavaScript errors
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript Error:', e.error);
+            console.error('Error message:', e.message);
+            console.error('Error filename:', e.filename);
+            console.error('Error line:', e.lineno);
+            document.getElementById('output').innerHTML += '<br><strong style="color:red;">ERROR: ' + e.message + '</strong>';
+        });
+        
+        console.log('Before loading script');
+        console.log('window.mgraphCreateLayout before:', typeof window.mgraphCreateLayout);
+    </script>
+    
+    <script src="../dist/mgraph.forcelayout.umd.js" onerror="console.error('Script failed to load')"></script>
+    
+    <script>
+        console.log('After loading script');
+        console.log('window.mgraphCreateLayout after:', typeof window.mgraphCreateLayout);
+        console.log('mgraphCreateLayout:', typeof mgraphCreateLayout);
+        
+        const output = document.getElementById('output');
+        
+        if (typeof mgraphCreateLayout !== 'undefined') {
+            output.innerHTML = '✅ SUCCESS: mgraphCreateLayout is available!';
+            console.log('mgraphCreateLayout function:', mgraphCreateLayout);
+            console.log('mgraphCreateLayout.simulator:', typeof mgraphCreateLayout.simulator);
+        } else {
+            output.innerHTML = '❌ FAILED: mgraphCreateLayout is not available';
+            
+            // Check what globals are available
+            const mgraphGlobals = Object.keys(window).filter(key => 
+                key.toLowerCase().includes('mgraph')
+            );
+            console.log('Available mgraph globals:', mgraphGlobals);
+        }
+    </script>
+</body>
+</html>

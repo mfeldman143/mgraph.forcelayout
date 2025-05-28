@@ -289,4 +289,4 @@ export default function createLayout(graph, physicsSettings = {}) {
   }
 }
 
-export const simulator = createSimulatorModule;
+createLayout.simulator = createSimulatorModule;

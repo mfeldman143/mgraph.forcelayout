@@ -1,4 +1,6 @@
+// test/code-generators.test.js
 import { getVariableName, createPatternBuilder, generateBoundsFunction, generateCreateBodyFunction, generateCreateDragForceFunction, generateCreateSpringForceFunction, generateIntegratorFunction, generateQuadTreeFunction } from '../lib/code-generators';
+import { describe, test, expect } from 'vitest';
 describe('Code Generators Module', () => {
     describe('getVariableName', () => {
         test('returns correct coordinate names', () => {

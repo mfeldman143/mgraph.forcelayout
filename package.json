@@ -3,29 +3,34 @@
   "version": "3.3.1",
   "description": "Force directed graph drawing layout",
   "main": "index.js",
-  "jsdelivr": "dist/mgraph.forcelayout.min.js",
-  "unpkg": "dist/mgraph.forcelayout.min.js",
+  "module": "dist/mgraph.forcelayout.esm.js",
+  "jsdelivr": "dist/mgraph.forcelayout.umd.min.js",
+  "unpkg": "dist/mgraph.forcelayout.umd.min.js",
   "types": "./index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "jest",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "prepublishOnly": "npm run test:run && npm run build",
     "bench": "node benchmarks/code-generators.bench.js",
-    "lint": "eslint .",
     "perf": "npm version && node perf/test.js",
-    "build": "browserify index.js -s mgraphCreateLayout -o dist/mgraph.forcelayout.js && terser --compress -o dist/mgraph.forcelayout.min.js -- dist/mgraph.forcelayout.js",
-    "build2d": "browserify index.js -t ./inline-transform.js -s mgraphCreate2dLayout > dist/mgraph.forcelayout2d.js && terser --compress -o dist/mgraph.forcelayout2d.min.js -- dist/mgraph.forcelayout2d.js"
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mfeldman143/mgraph.forcelayout.git"
+    "url": "git+https://github.com/mfeldman143/mgraph.forcelayout.git"
   },
   "keywords": [
     "mgraph",
     "graph",
     "layout",
     "force",
-    "forcelayout"
+    "forcelayout",
+    "physics",
+    "simulation",
+    "visualization"
   ],
   "author": "Michael Feldman",
   "contributors": [
@@ -39,22 +44,33 @@
   "bugs": {
     "url": "https://github.com/mfeldman143/mgraph.forcelayout/issues"
   },
+  "homepage": "https://github.com/mfeldman143/mgraph.forcelayout#readme",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib/",
+    "dist/",
+    "LICENSE",
+    "README.md"
+  ],
   "devDependencies": {
-    "@types/jest": "^29.5.14",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@vitest/ui": "^3.1.4",
     "benchmark": "2.1.4",
-    "browserify": "^17.0.0",
-    "eslint": "9.20.1",
     "mgraph.generators": "^1.0.0",
     "mgraph.graph": "^1.0.0",
-    "tap": "^21.0.2",
-    "terser": "^5.3.0",
-    "through2": "^4.0.2",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.7.3"
+    "rollup": "^4.41.1",
+    "typescript": "^5.7.3",
+    "vitest": "^3.1.4"
   },
   "dependencies": {
     "mgraph.events": "^1.0.0",
     "mgraph.merge": "^1.0.0",
     "mgraph.random": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

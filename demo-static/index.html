@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mgraph.forcelayout Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, .graph-container {
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <h3>mgraph.forcelayout Demo</h3>
+    <p>5x5 Grid Layout</p>
+  </div>
+  <svg class="graph-container"></svg>
+  
+  <!-- Use mgraph packages -->
+  <script src='https://cdn.jsdelivr.net/npm/mgraph.generators@1.0.0/dist/mgraph.generators.umd.min.js'></script>
+  <script src="../dist/mgraph.forcelayout.umd.js"></script>
+  
+  <script>
+    // Create a 5x5 grid using mgraph.generators
+    const graph = mgraphGenerators.grid(5, 5);
+    
+    // Create layout using your new package
+    const layout = mgraphCreateLayout.default(graph);
+    
+    // Run layout simulation
+    for (let i = 0; i < 300; ++i) {
+      layout.step();
+    }
+    
+    // Get bounding box (note: different method name)
+    const rect = layout.getGraphRect();
+    const w = rect.x2 - rect.x1;
+    const h = rect.y2 - rect.y1;
+    const dw = w * 0.2;
+    const dh = h * 0.2;
+
+    const container = document.querySelector('.graph-container');
+    // Make it centered:
+    container.setAttribute('viewBox', `${rect.x1 - dw} ${rect.y1 - dh} ${w + 2 * dw} ${h + 2 * dh}`);
+    
+    // Render edges:
+    graph.forEachLink(link => {
+      const from = layout.getNodePosition(link.fromId);
+      const to = layout.getNodePosition(link.toId);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', from.x);
+      line.setAttribute('y1', from.y);
+      line.setAttribute('x2', to.x);
+      line.setAttribute('y2', to.y);
+      line.setAttribute('stroke', '#666');
+      line.setAttribute('stroke-width', '0.5');
+      container.appendChild(line);
+    });
+    
+    // Render nodes:
+    graph.forEachNode(node => {
+      const pos = layout.getNodePosition(node.id);
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', pos.x);
+      circle.setAttribute('cy', pos.y);
+      circle.setAttribute('r', 1.5);
+      circle.setAttribute('fill', 'orange');
+      circle.setAttribute('stroke', '#333');
+      circle.setAttribute('stroke-width', '0.5');
+      container.appendChild(circle);
+    });
+    
+    console.log('Demo completed! Graph has', graph.getNodesCount(), 'nodes and', graph.getLinksCount(), 'links');
+  </script>
+</body>
+</html>
