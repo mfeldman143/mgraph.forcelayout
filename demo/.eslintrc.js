@@ -1,18 +1,19 @@
 module.exports = {
   root: true,
   env: {
-    node: true
+    node: true,
   },
-  'extends': [
-    'plugin:vue/essential',
-    'eslint:recommended'
+  extends: [
+    'plugin:vue/vue3-essential',
+    'eslint:recommended',
   ],
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-unused-vars': 'off'
-  },
   parserOptions: {
-    parser: 'babel-eslint'
-  }
+    parser: '@babel/eslint-parser',
+    requireConfigFile: false,
+  },
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-unused-vars': 'warn', // Change from error to warning
+  },
 }

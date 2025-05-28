@@ -3,14 +3,15 @@
   <div class='row'>
     <div class='col'>{{label}}</div>
     <div class='col'>
-      <input type='number' 
-        :step='step' 
-        v-model='inputValue' 
-        @focus="selectAll"
-        autocomplete="off" 
-        autocorrect="off" 
-        autocapitalize="off" 
-        spellcheck="false">
+      <input type='number'
+         :step='step'
+         :value='modelValue'
+         @input='updateValue'
+         @focus="selectAll"
+        autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false">
     </div>
     <help-icon @show='helpVisible = !helpVisible' :class='{open: helpVisible}'></help-icon>
   </div>
@@ -19,8 +20,9 @@
   </div>
 </div>
 </template>
+
 <script>
-import HelpIcon from './HelpIcon';
+import HelpIcon from './HelpIcon.vue';
 
 export default {
   components: {
@@ -28,26 +30,24 @@ export default {
   },
   props: {
     label: String,
-    value: Number, 
+    modelValue: Number,  // Changed from 'value' to 'modelValue'
     step: {
       default: '0.1',
       type: String
     },
   },
+  emits: ['update:modelValue'],  // Added emits declaration
   methods: {
     selectAll(e) {
       e.target.select()
+    },
+    updateValue(e) {
+      this.$emit('update:modelValue', parseFloat(e.target.value));  // Changed from 'input' to 'update:modelValue'
     }
   },
   data() {
     return {
       helpVisible: false,
-      inputValue: this.value
-    }
-  },
-  watch: {
-    inputValue(newValue) {
-      this.$emit('input', parseFloat(newValue));
     }
   }
 }
@@ -55,7 +55,6 @@ export default {
 
 <style lang="stylus">
 primary-text = white;
-
 help-background = #004499;
 
 .block {

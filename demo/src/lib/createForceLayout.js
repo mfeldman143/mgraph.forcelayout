@@ -1,7 +1,7 @@
-import createLayout from '../../../';
+// lib/createForceLayout.js
+import createLayout from 'mgraph.forcelayout';
 
 export default function createForceLayout(graph, layoutSettings) {
-  // return window.ngraphCreate2dLayout(graph, Object.assign({
   return createLayout(graph, Object.assign({
     dimensions: 2,
     timeStep: 0.5,

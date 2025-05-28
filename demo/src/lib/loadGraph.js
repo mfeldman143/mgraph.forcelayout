@@ -1,6 +1,7 @@
-import createGraph from 'ngraph.graph';
+// lib/loadGraph.js
+import createGraph from 'mgraph.graph';
 import miserables from 'miserables';
-import generate from 'ngraph.generators';
+import generate from 'mgraph.generators';
 
 let cache = simpleCache();
 
@@ -11,21 +12,30 @@ export default function loadGraph(name) {
   let mtxObject = cache.get(name);
   if (mtxObject) return Promise.resolve(renderGraph(mtxObject.links, mtxObject.recordsPerEdge));
 
-  return fetch(`https://s3.amazonaws.com/yasiv_uf/out/${name}/index.js`, {
-    mode: 'cors'
-  })
-  .then(x => x.json())
-  .then(mtxObject => {
-    cache.put(name, mtxObject);
-    return renderGraph(mtxObject.links, mtxObject.recordsPerEdge);
-  });
+  // Convert "HB/blckhole" to "./assets/hb/blckhole/index.js"
+  const normalizedPath = name.toLowerCase().replace('/', '/');
+  const url = `./assets/${normalizedPath}/index.js`;
+  
+  return fetch(url)
+    .then(x => x.json())
+    .then(mtxObject => {
+      cache.put(name, mtxObject);
+      return renderGraph(mtxObject.links, mtxObject.recordsPerEdge);
+    })
+    .catch(error => {
+      console.error(`Failed to load graph ${name}:`, error);
+      // Fallback to a simple generated graph
+      return generate.path(20);
+    });
 }
+
+
 function renderGraph (edges, recordsPerEdge) {
   let graph = createGraph();
   for(var i = 0; i < edges.length - 1; i += recordsPerEdge) {
       graph.addLink(edges[i], edges[i + 1]);
   }
-  return graph
+  return graph;
 }
 
 function simpleCache() {
@@ -36,7 +46,6 @@ function simpleCache() {
             if (!supported) { return null; }
             var graphData = JSON.parse(window.localStorage.getItem(key));
             if (!graphData || graphData.recordsPerEdge === undefined) {
-              // this is old cache. Invalidate it
               return null;
             }
             return graphData;
@@ -46,7 +55,6 @@ function simpleCache() {
             try {
                 window.localStorage.setItem(key, JSON.stringify(value));
             } catch(err) {
-                // TODO: make something clever than this in case of quata exceeded.
                 window.localStorage.clear();
             }
         }

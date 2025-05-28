@@ -1,3 +1,4 @@
+// fileDrop.js
 /**
  * Handles dropped files into the browser.
  */

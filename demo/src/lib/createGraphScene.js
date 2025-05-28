@@ -1,11 +1,12 @@
+// lib/createGraphScene.js
+/* eslint-disable no-unused-vars */
 import {createScene, createGuide} from 'w-gl';
 import LineCollection from './LineCollection';
 import PointCollection from './PointCollection';
 import bus from './bus';
-import createHighLayout from 'ngraph.hde'
 import createForceLayout from './createForceLayout';
 import findLargestComponent from './findLargestComponent';
-import createGraph from 'ngraph.graph';
+import createGraph from 'mgraph.graph';
 
 export default function createGraphScene(canvas, layoutSettings = {}) {
   let drawLinks = true;
@@ -50,7 +51,7 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
 
     //standardizePositions(layout)
     let minX = -42, minY = -42;
-    let maxX = 42, maxY =42 
+    let maxX = 42, maxY = 42;
 
     setSceneSize(Math.max(maxX - minX, maxY - minY) * 1.2);
     initUIElements();

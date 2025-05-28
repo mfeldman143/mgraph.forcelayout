@@ -8,8 +8,11 @@
 
 <script>
 export default {
+  emits: ['show'],  // Added emits declaration for Vue 3
   methods: {
-    show() { this.$emit('show');}
+    show() { 
+      this.$emit('show');
+    }
   }
 }
 </script>

@@ -3,7 +3,7 @@
   <div class='row'>
     <div class='col'>{{label}}</div>
     <div class='col'>
-      <input type='checkbox' v-model='inputValue' >
+      <input type='checkbox' :checked='modelValue' @input='updateValue' >
     </div>
     <help-icon @show='helpVisible = !helpVisible' :class='{open: helpVisible}'></help-icon>
   </div>
@@ -12,8 +12,9 @@
   </div>
 </div>
 </template>
+
 <script>
-import HelpIcon from './HelpIcon';
+import HelpIcon from './HelpIcon.vue';
 
 export default {
   components: {
@@ -21,22 +22,20 @@ export default {
   },
   props: {
     label: String,
-    value: Boolean, 
+    modelValue: Boolean,  // Changed from 'value' to 'modelValue'
   },
+  emits: ['update:modelValue'],  // Added emits declaration
   methods: {
     selectAll(e) {
       e.target.select()
+    },
+    updateValue(e) {
+      this.$emit('update:modelValue', e.target.checked);  // Changed from 'input' to 'update:modelValue'
     }
   },
   data() {
     return {
       helpVisible: false,
-      inputValue: this.value
-    }
-  },
-  watch: {
-    inputValue(newValue) {
-      this.$emit('input', newValue);
     }
   }
 }
@@ -44,7 +43,6 @@ export default {
 
 <style lang="stylus">
 primary-text = white;
-
 help-background = #004499;
 
 .block {

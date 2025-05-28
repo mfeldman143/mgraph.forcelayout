@@ -1,5 +1,6 @@
-import fromDot from 'ngraph.fromdot';
-import fromJson from 'ngraph.fromjson';
+// lib/loadDroppedGraph.js
+import fromDot from 'mgraph.fromdot';
+import fromJson from 'mgraph.fromjson';
 import bus from './bus.js';
 
 /**

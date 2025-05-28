@@ -1,3 +1,4 @@
+// LineCollection.js
 import {GLCollection, defineProgram, InstancedAttribute, ColorAttribute} from 'w-gl';
 
 export default class LineCollection extends GLCollection {

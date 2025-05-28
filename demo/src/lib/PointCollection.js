@@ -1,4 +1,4 @@
-
+// PointCollection.js
 import {GLCollection, defineProgram, ColorAttribute, InstancedAttribute} from 'w-gl';
 
 export default class PointCollection extends GLCollection {

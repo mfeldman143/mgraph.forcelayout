@@ -1,7 +1,8 @@
-import createGraph from 'ngraph.graph';
+// lib/findLargestComponent.js
+import createGraph from 'mgraph.graph';
 
 /**
- * Returns array of first `count` largest connected components 
+ * Returns array of first `count` largest connected components
  * of the `graph`
  */
 export default function findLargestComponent(graph, count) {
