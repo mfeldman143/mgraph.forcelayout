@@ -1,4 +1,4 @@
-// lib/createGraphScene.js
+// src/lib/createGraphScene.js
 /* eslint-disable no-unused-vars */
 import {createScene, createGuide} from 'w-gl';
 import LineCollection from './LineCollection';
@@ -9,6 +9,9 @@ import findLargestComponent from './findLargestComponent';
 import createGraph from 'mgraph.graph';
 
 export default function createGraphScene(canvas, layoutSettings = {}) {
+  console.log('🎨 createGraphScene called');
+  console.log('Canvas:', canvas);
+  console.log('Layout settings:', layoutSettings);
   let drawLinks = true;
 
   // Since graph can be loaded dynamically, we have these uninitialized
@@ -30,6 +33,11 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
   };
 
   function loadGraph(newGraph, desiredLayout) {
+    console.log('📊 loadGraph called with:', newGraph);
+    if (newGraph) {
+      console.log('Graph nodes:', newGraph.getNodesCount());
+      console.log('Graph links:', newGraph.getLinksCount());
+    }
     if (scene) {
       scene.dispose();
       layout.dispose();
@@ -48,6 +56,7 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
     guide = createGuide(scene, {showGrid: true, lineColor: 0xffffff10, maxAlpha: 0x10, showCursor: false});
     // this is a standard force layout
     layout = createForceLayout(graph, layoutSettings);
+    console.log('🔧 Layout created:', layout);
 
     //standardizePositions(layout)
     let minX = -42, minY = -42;
@@ -55,8 +64,10 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
 
     setSceneSize(Math.max(maxX - minX, maxY - minY) * 1.2);
     initUIElements();
+    console.log('🎭 UI elements initialized');
 
     rafHandle = requestAnimationFrame(frame);
+    console.log('🎬 Animation started');
   }
 
   function setSceneSize(sceneSize) {
@@ -111,12 +122,15 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
   }
   
   function initUIElements() {
+    console.log('🎭 Initializing UI elements...');
     nodes = new PointCollection(scene.getGL(), {
       capacity: graph.getNodesCount()
     });
+    console.log('Points collection created for', graph.getNodesCount(), 'nodes');
 
     graph.forEachNode(node => {
       var point = layout.getNodePosition(node.id);
+      console.log('Node', node.id, 'position:', point);
       let size = 1;
       if (node.data && node.data.size) {
         size = node.data.size;
@@ -129,6 +143,7 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
     });
 
     lines = new LineCollection(scene.getGL(), { capacity: graph.getLinksCount() });
+    console.log('Lines collection created for', graph.getLinksCount(), 'links');
 
     graph.forEachLink(link => {
       var from = layout.getNodePosition(link.fromId);
@@ -141,6 +156,7 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
 
     scene.appendChild(lines);
     scene.appendChild(nodes);
+    console.log('✅ UI elements added to scene');
   }
 
   function frame() {
@@ -160,6 +176,7 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
     }
     drawGraph();
     scene.renderFrame();
+    // console.log('🎬 Frame rendered'); // Uncomment temporarily to test
   }
 
   function drawGraph() {

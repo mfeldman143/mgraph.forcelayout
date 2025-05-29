@@ -42,15 +42,14 @@ git add .
 # Commit
 git commit -m 'Deploy to gh-pages'
 
-# Change this line to your repository URL
-# Replace 'mfeldman143' with your GitHub username if different
+# Change this to your DEMO repository URL (not the mgraph.forcelayout package)
 echo "${YELLOW}📤 Pushing to GitHub Pages...${NC}"
-git push --force git@github.com:mfeldman143/mgraph.forcelayout.git main:gh-pages
+git push --force git@github.com:mfeldman143/graph-layout-demo.git main:gh-pages
 
 # Check if push was successful
 if [ $? -eq 0 ]; then
     echo "${GREEN}🎉 Successfully deployed to GitHub Pages!${NC}"
-    echo "${GREEN}Your site will be available at: https://mfeldman143.github.io/mgraph.forcelayout/${NC}"
+    echo "${GREEN}Your site will be available at: https://mfeldman143.github.io/graph-layout-demo/${NC}"
 else
     echo "${RED}❌ Failed to push to GitHub Pages${NC}"
 fi

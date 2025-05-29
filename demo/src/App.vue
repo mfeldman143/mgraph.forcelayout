@@ -1,9 +1,10 @@
+// src/App.vue
 <template>
   <div>
     <canvas id="cnv"></canvas>
     <div id="app">
       <h2>
-        <a href='https://github.com/anvaka/ngraph.forcelayout'>ngraph.forcelayout</a> demo
+        <a href='https://github.com/mfeldman143/mgraph.forcelayout'>ngraph.forcelayout</a> demo
         <small class='toggle-settings'>
           <a href='#' @click.prevent='settingsOpen = !settingsOpen'>
             {{settingsOpen ? 'hide settings' : 'show settings'}}
@@ -101,7 +102,8 @@ export default {
       })
     },
     onGraphLoaded() {
-      this.isRunning = false
+      this.isRunning = true; // Set to true to automatically start layout
+      this.scene.runLayout(true); // Start the layout
     }
   },
   watch: {
@@ -141,12 +143,33 @@ export default {
     }
   },
   mounted() {
-    const canvas = document.getElementById('cnv')
-    this.scene = createGraphScene(canvas, {...this.layoutSettings})
-    this.loadNewGraph(this.selectedGraph)
-    bus.on('load-graph', this.onGraphLoaded)
-  },
+    console.log('🎬 App mounted, setting up scene...');
+    const canvas = document.getElementById('cnv');
+    console.log('Canvas found:', canvas);
+    
+    // Test WebGL
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) {
+      console.error('❌ WebGL not supported!');
+      return;
+    } else {
+      console.log('✅ WebGL working');
+    }
 
+    if (!canvas) {
+      console.error('❌ Canvas not found!');
+      return;
+    }
+    
+    console.log('Creating scene with settings:', {...this.layoutSettings});
+    this.scene = createGraphScene(canvas, {...this.layoutSettings});
+    console.log('Scene created:', this.scene);
+    
+    console.log('Loading initial graph:', this.selectedGraph);
+    this.loadNewGraph(this.selectedGraph);
+    
+    bus.on('load-graph', this.onGraphLoaded);
+  },
   beforeUnmount() {
     if (this.scene) {
       this.scene.dispose()
@@ -164,6 +187,7 @@ small-screen = 500px;
   left: 0;
   width: 100%;
   height: 100%;
+  background: rgb(12, 41, 82);
 }
 
 #app {

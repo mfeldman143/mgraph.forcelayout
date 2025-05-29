@@ -13,22 +13,28 @@ export default function loadGraph(name) {
   if (mtxObject) return Promise.resolve(renderGraph(mtxObject.links, mtxObject.recordsPerEdge));
 
   // Convert "HB/blckhole" to "./assets/hb/blckhole/index.js"
-  const normalizedPath = name.toLowerCase().replace('/', '/');
-  const url = `./assets/${normalizedPath}/index.js`;
+  const normalizedPath = name.toLowerCase(); // Remove the unnecessary replace
+  const url = `./${normalizedPath}/index.js`;
+  
+  console.log(`Loading graph from: ${url}`); // Debug log
   
   return fetch(url)
-    .then(x => x.json())
+    .then(x => {
+      if (!x.ok) {
+        throw new Error(`HTTP ${x.status}: ${x.statusText}`);
+      }
+      return x.json();
+    })
     .then(mtxObject => {
       cache.put(name, mtxObject);
       return renderGraph(mtxObject.links, mtxObject.recordsPerEdge);
     })
     .catch(error => {
-      console.error(`Failed to load graph ${name}:`, error);
+      console.error(`Failed to load graph ${name} from ${url}:`, error);
       // Fallback to a simple generated graph
       return generate.path(20);
     });
 }
-
 
 function renderGraph (edges, recordsPerEdge) {
   let graph = createGraph();

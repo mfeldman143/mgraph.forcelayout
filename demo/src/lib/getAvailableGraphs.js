@@ -1,10 +1,13 @@
 // lib/getAvailableGraphs.js
 export default function getAvailableGraphs() {
   return [
-    'blckhole',
-    // Add more as you create the asset files
-    // 'Bai/rw5151',
-    // 'HB/bcsstm13',
-    // etc...
+    'Miserables',
+    'Binary',
+    // Based on your assets structure:
+    'hb/blckhole',
+    'hb/bcsstm13', 
+    'hb/ash219',
+    'bai/rw5151',
+    'pajek/csphd'
   ];
 }

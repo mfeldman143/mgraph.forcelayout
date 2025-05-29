@@ -1,4 +1,4 @@
-// lib/createForceLayout.js
+// src/lib/createForceLayout.js
 import createLayout from 'mgraph.forcelayout';
 
 export default function createForceLayout(graph, layoutSettings) {
@@ -9,7 +9,6 @@ export default function createForceLayout(graph, layoutSettings) {
     gravity: -12,
     springCoefficient: 0.8,
     dragCoefficient: 0.9,
-    // adaptiveTimeStepWeight: 0.1,
     debug: false,
   }, layoutSettings));
 }
