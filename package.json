@@ -1,6 +1,6 @@
 {
   "name": "mgraph.forcelayout",
-  "version": "3.3.7",
+  "version": "3.3.8",
   "description": "Force directed graph drawing layout",
   "main": "index.js",
   "module": "dist/mgraph.forcelayout.esm.js",
@@ -58,12 +58,15 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
     "@vitest/ui": "^3.1.4",
+    "@vue/test-utils": "^2.4.6",
     "benchmark": "2.1.4",
+    "jsdom": "^26.1.0",
     "mgraph.generators": "^1.0.0",
     "mgraph.graph": "^1.0.2",
     "rollup": "^4.41.1",
     "typescript": "^5.7.3",
-    "vitest": "^3.1.4"
+    "vitest": "^3.1.4",
+    "vue": "^3.5.16"
   },
   "dependencies": {
     "mgraph.events": "^1.0.0",
