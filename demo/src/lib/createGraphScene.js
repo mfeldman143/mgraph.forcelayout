@@ -9,9 +9,6 @@ import findLargestComponent from './findLargestComponent';
 import createGraph from 'mgraph.graph';
 
 export default function createGraphScene(canvas, layoutSettings = {}) {
-  console.log('🎨 createGraphScene called');
-  console.log('Canvas:', canvas);
-  console.log('Layout settings:', layoutSettings);
   let drawLinks = true;
 
   // Since graph can be loaded dynamically, we have these uninitialized
@@ -33,10 +30,7 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
   };
 
   function loadGraph(newGraph, desiredLayout) {
-    console.log('📊 loadGraph called with:', newGraph);
     if (newGraph) {
-      console.log('Graph nodes:', newGraph.getNodesCount());
-      console.log('Graph links:', newGraph.getLinksCount());
     }
     if (scene) {
       scene.dispose();
@@ -51,50 +45,12 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
 
     graph = newGraph; //findLargestComponent(newGraph, 1)[0];
 
-    // --- BEGIN PROPOSED FIX for node.links ---
-    // Ensure each node has a .links property which is an array of its incident links.
-    // mgraph.forcelayout expects this structure.
-    if (graph && typeof graph.forEachNode === 'function' && typeof graph.forEachLink === 'function') {
-      const nodeLinksMap = new Map();
-
-      graph.forEachLink(link => {
-        // Add link to the source node's list
-        if (!nodeLinksMap.has(link.fromId)) {
-          nodeLinksMap.set(link.fromId, []);
-        }
-        nodeLinksMap.get(link.fromId).push(link);
-
-        // Add link to the target node's list (if different from source, to avoid duplicates for self-loops in the list)
-        // Depending on how mgraph.forcelayout uses node.links, double-adding for undirected edges might be intended or not.
-        // Assuming each link should appear in lists of both its connected nodes.
-        if (link.fromId !== link.toId) {
-          if (!nodeLinksMap.has(link.toId)) {
-            nodeLinksMap.set(link.toId, []);
-          }
-          nodeLinksMap.get(link.toId).push(link);
-        }
-      });
-
-      graph.forEachNode(node => {
-        node.links = nodeLinksMap.get(node.id) || [];
-        // --- BEGIN PROPOSED FIX for node.mass ---
-        // Ensure each node has a numeric mass property.
-        if (typeof node.mass !== 'number' || isNaN(node.mass)) {
-          node.mass = 1.0; // Default mass
-        }
-        // --- END PROPOSED FIX for node.mass ---
-      });
-      console.log('🔗 Node links and mass populated for mgraph.forcelayout compatibility.');
-    }
-    // --- END PROPOSED FIX for node.links ---
-
     // Let them play on console with it!
     window.graph = graph;
 
     guide = createGuide(scene, {showGrid: true, lineColor: 0xffffff10, maxAlpha: 0x10, showCursor: false});
     // this is a standard force layout
     layout = createForceLayout(graph, layoutSettings);
-    console.log('🔧 Layout created:', layout);
 
     //standardizePositions(layout)
     let minX = -42, minY = -42;
@@ -102,10 +58,8 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
 
     setSceneSize(Math.max(maxX - minX, maxY - minY) * 1.2);
     initUIElements();
-    console.log('🎭 UI elements initialized');
 
     rafHandle = requestAnimationFrame(frame);
-    console.log('🎬 Animation started');
   }
 
   function setSceneSize(sceneSize) {
@@ -163,15 +117,12 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
   }
   
   function initUIElements() {
-    console.log('🎭 Initializing UI elements...');
     nodes = new PointCollection(scene.getGL(), {
       capacity: graph.getNodesCount()
     });
-    console.log('Points collection created for', graph.getNodesCount(), 'nodes');
 
     graph.forEachNode(node => {
       var point = layout.getNodePosition(node.id);
-      console.log('Node', node.id, 'position:', point);
       let size = 1;
       if (node.data && node.data.size) {
         size = node.data.size;
@@ -185,7 +136,6 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
     });
 
     lines = new LineCollection(scene.getGL(), { capacity: graph.getLinksCount() });
-    console.log('Lines collection created for', graph.getLinksCount(), 'links');
 
     graph.forEachLink(link => {
       var from = layout.getNodePosition(link.fromId);
@@ -199,7 +149,6 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
 
     scene.appendChild(lines);
     scene.appendChild(nodes);
-    console.log('✅ UI elements added to scene');
   }
 
   function frame() {

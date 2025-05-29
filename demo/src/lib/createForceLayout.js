@@ -1,5 +1,5 @@
 // src/lib/createForceLayout.js
-import createLayout from 'mgraph.forcelayout';
+import createLayout from './mgraphForceLayoutPatched';
 
 export default function createForceLayout(graph, layoutSettings) {
   return createLayout(graph, Object.assign({

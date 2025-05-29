@@ -1,6 +1,6 @@
-// index.js
+// src/lib/mgraphForceLayoutPatched.js
 import eventify from 'mgraph.events';
-import createSimulatorModule from './lib/createPhysicsSimulator.js';
+import createSimulatorModule from '../node_modules/mgraph.forcelayout/lib/createPhysicsSimulator.js';
 
 const noop = () => {};
 
@@ -255,7 +255,7 @@ export default function createLayout(graph, physicsSettings = {}) {
   function updateBodyMass(nodeId) {
     const body = nodeBodies.get(nodeId);
     const links = graph.getLinks(nodeId);
-    const linkCount = links ? Array.from(links).length : 0;
+    const linkCount = links ? Array.from(links).length : 0; // Always convert to array
     const mass = 1 + linkCount / 3.0;
     if (Number.isNaN(mass)) {
       throw new Error('Node mass should be a number');

@@ -96,7 +96,7 @@ export interface Layout<T extends Graph> {
   getNodePosition(nodeId: NodeId): Vector;
   setNodePosition(nodeId: NodeId, x: number, y: number, z?: number, ...c: number[]): void;
   getLinkPosition(linkId: LinkId): { from: Vector; to: Vector };
-  getGraphRect(): { x1: number; y1: number; x2: number; y2: number };
+  getGraphRect(): BoundingBox; // Changed from { x1: number; y1: number; x2: number; y2: number }
   forEachBody(callbackfn: (value: Body, key: NodeId, map: Map<NodeId, Body>) => void): void;
   pinNode(node: Node, isPinned: boolean): void;
   isNodePinned(node: Node): boolean;
