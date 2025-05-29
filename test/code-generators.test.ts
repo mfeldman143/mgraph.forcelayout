@@ -77,8 +77,8 @@ describe('Code Generators Module', () => {
     test('Body class uses debug setters when enabled', () => {
       const Body = generateCreateBodyFunction(2, true);
       const body = new Body(1, 2);
-      expect(() => { body.x = 'not a number'; }).toThrow();
-      expect(() => { body.y = 'not a number'; }).toThrow();
+      expect(() => { body.pos.x = 'not a number'; }).toThrow();
+      expect(() => { body.pos.y = 'not a number'; }).toThrow();
     });
   });
 
@@ -136,7 +136,9 @@ describe('Code Generators Module', () => {
 
   describe('generateQuadTreeFunction', () => {
     test('returns a valid quad tree instance for 2D', () => {
-      const quadTree = generateQuadTreeFunction(2);
+      const quadTreeFactory = generateQuadTreeFunction(2);
+      const createQuadTreeFunc = quadTreeFactory();
+      const quadTree = createQuadTreeFunc({}, { nextDouble: () => Math.random() }); // Pass options and random
       expect(typeof quadTree.insertBodies).toBe('function');
       expect(typeof quadTree.getRoot).toBe('function');
       expect(typeof quadTree.updateBodyForce).toBe('function');
