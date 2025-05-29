@@ -1,4 +1,5 @@
 // main.js
+window.updateStableStatus = function() {};
 import { createApp } from 'vue'
 import App from './App.vue'
 import fileDrop from './lib/fileDrop.js'

@@ -1,7 +1,7 @@
 // test/es-module.test.js
 import { test, expect } from 'vitest';
-import createLayout from '../index.js'; // Assuming index.js is the ES module entry point
+import createLayout from '../index.js';
 
-test('mgraph.forcelayout can be imported as an ES module', () => {
+test('package exports an ES‑module function', () => {
   expect(typeof createLayout).toBe('function');
 });

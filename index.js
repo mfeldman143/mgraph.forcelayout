@@ -6,10 +6,6 @@ const noop = () => {};
 
 /**
  * Creates a force-based layout for a given graph.
- *
- * @param {any} graph - The graph to lay out.
- * @param {object} [physicsSettings={}] - Custom settings for the physics simulator.
- * @returns {object} The layout API.
  */
 export default function createLayout(graph, physicsSettings = {}) {
   if (!graph) {
@@ -19,23 +15,54 @@ export default function createLayout(graph, physicsSettings = {}) {
     throw new Error('Physics settings is expected to be an object');
   }
 
-  // Use a custom simulator if provided, otherwise fall back to the default.
-  const createSimulator =
-    physicsSettings.createSimulator || createSimulatorModule;
+  const createSimulator = physicsSettings.createSimulator || createSimulatorModule;
   const physicsSimulator = createSimulator(physicsSettings);
 
-  // Maps node IDs to physics body objects.
   const nodeBodies = new Map();
-  // Stores springs by link id.
   const springs = {};
   let bodiesCount = 0;
   const springTransform = physicsSimulator.settings.springTransform || noop;
 
-  // Initialize the physics state and start listening for graph changes.
   initPhysics();
   listenToEvents();
 
   let wasStable = false;
+
+  function onStableChanged(isStable) {
+    api.fire('stable', isStable);
+  }
+
+  const updateStableStatus = (isStableNow) => {
+    if (wasStable !== isStableNow) {
+      wasStable = isStableNow;
+      onStableChanged(isStableNow);
+    }
+  };
+
+  function forEachBody(cb) {
+    nodeBodies.forEach(cb);
+  }
+
+  function getForceVectorLength() {
+    let fx = 0, fy = 0;
+    forEachBody((body) => {
+      fx += Math.abs(body.force.x);
+      fy += Math.abs(body.force.y);
+    });
+    return Math.hypot(fx, fy);
+  }
+
+  function getSpring(fromId, toId) {
+    let linkId;
+    if (toId === undefined) {
+      linkId = typeof fromId !== 'object' ? fromId : fromId.id;
+    } else {
+      const link = graph.hasLink(fromId, toId);
+      if (!link) return;
+      linkId = link.id;
+    }
+    return springs[linkId];
+  }
 
   const api = {
     step() {
@@ -94,7 +121,6 @@ export default function createLayout(graph, physicsSettings = {}) {
     },
 
     getSpring,
-
     getForceVectorLength,
 
     simulator: physicsSimulator,
@@ -103,54 +129,9 @@ export default function createLayout(graph, physicsSettings = {}) {
   };
 
   eventify(api);
-  return api;
-
-  // ─── INTERNAL FUNCTIONS ────────────────────────────────────────────────
-
-  const updateStableStatus = (isStableNow) => {
-    if (wasStable !== isStableNow) {
-      wasStable = isStableNow;
-      onStableChanged(isStableNow);
-    }
-  };
-
-  function forEachBody(cb) {
-    nodeBodies.forEach(cb);
-  }
-
-  function getForceVectorLength() {
-    let fx = 0,
-      fy = 0;
-    forEachBody((body) => {
-      fx += Math.abs(body.force.x);
-      fy += Math.abs(body.force.y);
-    });
-    return Math.hypot(fx, fy);
-  }
-
-  /**
-   * Returns a spring for a given link. It supports two signatures:
-   *  - getSpring(linkId)
-   *  - getSpring(fromId, toId)
-   */
-  function getSpring(fromId, toId) {
-    let linkId;
-    if (toId === undefined) {
-      linkId = typeof fromId !== 'object' ? fromId : fromId.id;
-    } else {
-      const link = graph.hasLink(fromId, toId);
-      if (!link) return;
-      linkId = link.id;
-    }
-    return springs[linkId];
-  }
 
   function listenToEvents() {
     graph.on('changed', onGraphChanged);
-  }
-
-  function onStableChanged(isStable) {
-    api.fire('stable', isStable);
   }
 
   function onGraphChanged(changes) {
@@ -217,6 +198,7 @@ export default function createLayout(graph, physicsSettings = {}) {
     updateBodyMass(link.toId);
     const fromBody = nodeBodies.get(link.fromId);
     const toBody = nodeBodies.get(link.toId);
+    if (!fromBody || !toBody) return; // Safety check
     const spring = physicsSimulator.addSpring(fromBody, toBody, link.length);
     springTransform(link, spring);
     springs[link.id] = spring;
@@ -238,13 +220,11 @@ export default function createLayout(graph, physicsSettings = {}) {
     const links = graph.getLinks(node.id);
     if (!links) return [];
 
-    const linksArray = Array.from(links); // Always convert to array
-
+    const linksArray = Array.from(links);
     return linksArray.reduce((neighbors, link) => {
-      const otherBody =
-        link.fromId !== node.id
-          ? nodeBodies.get(link.fromId)
-          : nodeBodies.get(link.toId);
+      const otherBody = link.fromId !== node.id
+        ? nodeBodies.get(link.fromId)
+        : nodeBodies.get(link.toId);
       if (otherBody && otherBody.pos) {
         neighbors.push(otherBody);
       }
@@ -254,6 +234,7 @@ export default function createLayout(graph, physicsSettings = {}) {
 
   function updateBodyMass(nodeId) {
     const body = nodeBodies.get(nodeId);
+    if (!body) return; // Safety check
     const links = graph.getLinks(nodeId);
     const linkCount = links ? Array.from(links).length : 0;
     const mass = 1 + linkCount / 3.0;
@@ -273,6 +254,9 @@ export default function createLayout(graph, physicsSettings = {}) {
     }
     return nodeBodies.get(nodeId);
   }
+
+  return api;
 }
 
+// Export the simulator for compatibility
 createLayout.simulator = createSimulatorModule;

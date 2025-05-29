@@ -3,22 +3,20 @@ import { test, expect } from 'vitest';
 import { defineComponent, h } from 'vue';
 import { mount } from '@vue/test-utils';
 import createLayout from '../index.js';
-import createGraph from 'mgraph.graph'; // Import createGraph
+import createGraph from 'mgraph.graph';
 
-test('mgraph.forcelayout can be used within a Vue component', async () => {
-  const TestComponent = defineComponent({
+test('createLayout works inside a Vue 3 component', () => {
+  const Test = defineComponent({
     setup() {
-      const graph = createGraph(); // Create a mock graph
-      const layout = createLayout(graph); // Pass the graph to createLayout
+      const graph  = createGraph();
+      graph.addNode(1);
+      const layout = createLayout(graph);
       return { layout };
     },
-    render() {
-      return h('div', `Layout created: ${!!this.layout}`);
-    },
+    render() { return h('div', `layout ready: ${!!this.layout}`); }
   });
 
-  const wrapper = mount(TestComponent);
-
-  expect(wrapper.text()).toBe('Layout created: true');
-  expect(typeof wrapper.vm.layout.step).toBe('function'); // Check a method from the layout
+  const wrapper = mount(Test);
+  expect(wrapper.text()).toBe('layout ready: true');
+  expect(typeof wrapper.vm.layout.step).toBe('function');
 });

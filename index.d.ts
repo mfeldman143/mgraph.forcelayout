@@ -12,6 +12,7 @@ export interface Vector {
 }
 
 export interface Body {
+  id?: NodeId;
   isPinned: boolean;
   pos: Vector;
   force: Vector;
@@ -36,13 +37,14 @@ export interface QuadNode {
   mass_x: number;
   mass_y: number;
   mass_z?: number;
+  [key: string]: any;
 }
 
 export interface QuadTree {
   insertBodies(bodies: Body[]): void;
-  getRoot(): QuadNode & Record<string, number | null>;
+  getRoot(): QuadNode;
   updateBodyForce(sourceBody: Body): void;
-  options(newOptions: { gravity: number; theta: number }): { gravity: number; theta: number };
+  options(newOptions?: { gravity?: number; theta?: number }): { gravity: number; theta: number };
 }
 
 export interface BoundingBox {
@@ -52,19 +54,21 @@ export interface BoundingBox {
   max_y: number;
   min_z?: number;
   max_z?: number;
-  [min_max: string]: number | undefined;
+  [key: string]: number | undefined;
 }
 
 export interface PhysicsSettings {
-  springLength: number;
-  springCoefficient: number;
-  gravity: number;
-  theta: number;
-  dragCoefficient: number;
-  timeStep: number;
-  adaptiveTimeStepWeight: number;
-  dimensions: number;
-  debug: boolean;
+  springLength?: number;
+  springCoefficient?: number;
+  gravity?: number;
+  theta?: number;
+  dragCoefficient?: number;
+  timeStep?: number;
+  adaptiveTimeStepWeight?: number;
+  dimensions?: number;
+  debug?: boolean;
+  createSimulator?: (settings?: PhysicsSettings) => PhysicsSimulator;
+  springTransform?: (link: Link, spring: Spring) => void;
 }
 
 export interface PhysicsSimulator {
@@ -75,34 +79,34 @@ export interface PhysicsSimulator {
   addForce(forceName: string, forceFunction: ForceFunction): void;
   removeForce(forceName: string): void;
   getForces(): Map<string, ForceFunction>;
-  step(): boolean;
+  step(): number;
   addBody(body: Body): Body;
   addBodyAt(pos: Vector): Body;
   removeBody(body: Body): boolean;
-  addSpring(body1: Body, body2: Body, springLength: number, springCoefficient: number): Spring;
+  addSpring(body1: Body, body2: Body, springLength?: number, springCoefficient?: number): Spring;
   getTotalMovement(): number;
   removeSpring(spring: Spring): boolean;
   getBestNewBodyPosition(neighbors: Body[]): Vector;
   getBBox(): BoundingBox;
   getBoundingBox(): BoundingBox;
   invalidateBBox(): void;
-  gravity(value: number): number;
-  theta(value: number): number;
+  gravity(value?: number): number | PhysicsSimulator;
+  theta(value?: number): number | PhysicsSimulator;
   random: any;
 }
 
-export interface Layout<T extends Graph> {
+export interface Layout<T extends Graph> extends EventedType {
   step(): boolean;
   getNodePosition(nodeId: NodeId): Vector;
   setNodePosition(nodeId: NodeId, x: number, y: number, z?: number, ...c: number[]): void;
-  getLinkPosition(linkId: LinkId): { from: Vector; to: Vector };
-  getGraphRect(): BoundingBox; // Changed from { x1: number; y1: number; x2: number; y2: number }
-  forEachBody(callbackfn: (value: Body, key: NodeId, map: Map<NodeId, Body>) => void): void;
+  getLinkPosition(linkId: LinkId): { from: Vector; to: Vector } | undefined;
+  getGraphRect(): BoundingBox;
+  forEachBody(callbackfn: (value: Body, key: NodeId) => void): void;
   pinNode(node: Node, isPinned: boolean): void;
   isNodePinned(node: Node): boolean;
   dispose(): void;
   getBody(nodeId: NodeId): Body | undefined;
-  getSpring(linkId: LinkId | Link): Spring;
+  getSpring(linkId: LinkId | Link): Spring | undefined;
   getSpring(fromId: NodeId, toId: NodeId): Spring | undefined;
   getForceVectorLength(): number;
   readonly simulator: PhysicsSimulator;
@@ -113,4 +117,6 @@ export interface Layout<T extends Graph> {
 export default function createLayout<T extends Graph>(
   graph: T,
   physicsSettings?: Partial<PhysicsSettings>
-): Layout<T> & EventedType;
+): Layout<T>;
+
+export { createPhysicsSimulator } from './lib/createPhysicsSimulator.js';
