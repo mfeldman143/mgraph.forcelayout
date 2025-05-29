@@ -35,5 +35,6 @@ export default [
       }
     ],
     plugins: [nodeResolve()]
+    // No external dependencies = bundle everything
   }
 ];

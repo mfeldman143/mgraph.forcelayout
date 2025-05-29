@@ -1,6 +1,6 @@
 {
   "name": "mgraph.forcelayout",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Force directed graph drawing layout",
   "main": "index.js",
   "module": "dist/mgraph.forcelayout.esm.js",
@@ -54,6 +54,7 @@
     "README.md"
   ],
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
