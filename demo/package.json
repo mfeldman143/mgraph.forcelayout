@@ -14,7 +14,7 @@
     "core-js": "^3.42.0",
     "d3-color": "^3.1.0",
     "mgraph.events": "^1.0.0",
-    "mgraph.forcelayout": "^3.3.4",
+    "mgraph.forcelayout": "^3.3.5",
     "mgraph.fromdot": "^1.0.1",
     "mgraph.fromjson": "^1.0.1",
     "mgraph.generators": "^1.0.0",

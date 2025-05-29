@@ -10,6 +10,7 @@ import {
   generateIntegratorFunction,
   generateQuadTreeFunction
 } from '../lib/code-generators';
+import createLayout from '../index.js'; // Import createLayout
 
 describe('Code Generators Module', () => {
   describe('getVariableName', () => {
@@ -144,5 +145,48 @@ describe('Code Generators Module', () => {
       expect(typeof quadTree.updateBodyForce).toBe('function');
       expect(typeof quadTree.options).toBe('function');
     });
+  });
+});
+
+describe('createLayout', () => {
+  interface MockNode {
+    id: string;
+    links: Set<any>;
+    data: {};
+  }
+
+  interface MockGraph {
+    version: number;
+    getNodesCount: () => number;
+    getNode: (nodeId: string) => MockNode;
+    getLinks: (nodeId: string) => Set<any> | {};
+    forEachNode: (callback: (node: MockNode) => void) => void;
+    forEachLink: (callback: (link: any) => void) => void;
+    on: (eventName: string, callback: (...args: any[]) => void) => void;
+    off: (eventName: string, callback: (...args: any[]) => void) => void;
+    hasLink: (fromId: string, toId: string) => boolean;
+  }
+
+  test('throws error if nodeMass results in NaN', () => {
+    const mockGraph: MockGraph = {
+      version: 20, // Use defaultSetNodeMass
+      getNodesCount: () => 1,
+      getNode: (nodeId: string) => ({ id: nodeId, links: new Set(), data: {} }), // Node with empty links set
+      getLinks: (nodeId: string) => {
+        if (nodeId === 'problemNode') {
+          return {}; // This will cause links.size to be undefined -> NaN
+        }
+        return new Set(); // Default for other nodes
+      },
+      forEachNode: (callback: (node: MockNode) => void) => {
+        callback({ id: 'problemNode', links: new Set(), data: {} });
+      },
+      forEachLink: () => {},
+      on: () => {},
+      off: () => {},
+      hasLink: () => false,
+    };
+
+    expect(() => createLayout(mockGraph as any)).toThrow('Node mass should be a number');
   });
 });

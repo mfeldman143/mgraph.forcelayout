@@ -244,7 +244,12 @@ export default function createLayout(graph, physicsSettings = {}) {
 
   function getNeighborBodies(node) {
     if (!node.links) return [];
-    return node.links.reduce((neighbors, link) => {
+    let links = node.links;
+    // If node.links is a Set, convert it to an array
+    if (typeof links.forEach === 'function' && typeof links.reduce !== 'function') {
+      links = Array.from(links);
+    }
+    return links.reduce((neighbors, link) => {
       const otherBody =
         link.fromId !== node.id
           ? nodeBodies.get(link.fromId)
@@ -258,7 +263,8 @@ export default function createLayout(graph, physicsSettings = {}) {
 
   function updateBodyMass(nodeId) {
     const body = nodeBodies.get(nodeId);
-    const mass = nodeMass(nodeId);
+    const mass = nodeMass(nodeId); // This calls either defaultArrayNodeMass or defaultSetNodeMass
+    console.log(`Node ${nodeId}: links = ${graph.getLinks(nodeId)}, mass = ${mass}, type of mass = ${typeof mass}`); // Debugging line
     if (Number.isNaN(mass)) {
       throw new Error('Node mass should be a number');
     }
