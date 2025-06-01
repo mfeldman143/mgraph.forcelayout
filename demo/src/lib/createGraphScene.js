@@ -112,7 +112,7 @@ export default function createGraphScene(canvas, layoutSettings = {}) {
 
   function initScene() {
     let scene = createScene(canvas);
-    scene.setClearColor(12/255, 41/255, 82/255, 1)
+    scene.setClearColor(12/255, 41/255, 82/255, 1) // Reverted to original dark blue
     return scene;
   }
   

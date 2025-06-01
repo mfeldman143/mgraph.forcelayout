@@ -145,6 +145,9 @@ export default {
   mounted() {
     console.log('🎬 App mounted, setting up scene...');
     const canvas = document.getElementById('cnv');
+    // Set canvas dimensions to fill the window
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     console.log('Canvas found:', canvas);
     
     // Test WebGL
@@ -179,15 +182,20 @@ export default {
 </script>
 
 <style lang='stylus'>
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
 small-screen = 500px;
 
 #cnv {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgb(12, 41, 82);
+  background: rgb(12, 41, 82); /* Reverted to original background */
+  z-index: 1; /* Ensure canvas is visible below the UI */
 }
 
 #app {

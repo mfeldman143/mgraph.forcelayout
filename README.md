@@ -9,7 +9,7 @@ A modern, high-performance force-directed graph layout algorithm that works in a
 ## Features
 
 - 🚀 **High Performance**: Uses Barnes-Hut algorithm for O(n log n) complexity
-- 🌐 **Multi-dimensional**: Works in 2D, 3D, or any number of dimensions
+- 🌐 **Multi-dimensional**: Works in 2D (default), 3D, or any number of dimensions.
 - 📦 **Modern ES Modules**: Tree-shakeable, works with all modern bundlers
 - ⚛️ **Framework Ready**: Compatible with React, Vue, Angular, and vanilla JS
 - 🎯 **TypeScript**: Full TypeScript support with comprehensive type definitions
@@ -37,8 +37,11 @@ graph.addLink(1, 2);
 graph.addLink(2, 3);
 graph.addLink(3, 1);
 
-// Create layout
+// Create layout (defaults to 2D)
 const layout = createLayout(graph);
+
+// For a 3D layout:
+// const layout3D = createLayout(graph, { dimensions: 3 });
 
 // Run simulation
 for (let i = 0; i < 100; i++) {
@@ -54,6 +57,8 @@ graph.forEachNode(node => {
 // Clean up
 layout.dispose();
 ```
+
+**Note on Default Behavior:** The `createLayout` function defaults to a **2D layout**. You can configure it for 3D or other dimensions by passing the `dimensions` option in the `options` object (see below).
 
 ## API Reference
 
@@ -390,22 +395,39 @@ simulate();
 
 ## CDN Usage
 
-For direct browser usage without a bundler:
+For direct browser usage without a bundler, you have two main options:
+
+**1. ES Module (via `type="module"`)**
 
 ```html
 <script type="module">
+  // Ensure mgraph.graph is also loaded if you use it to create the graph instance
+  // import createGraph from 'https://unpkg.com/mgraph.graph/dist/mgraph.graph.esm.js'; 
   import createLayout from 'https://unpkg.com/mgraph.forcelayout/dist/mgraph.forcelayout.esm.js';
   
-  // Your code here
+  // const graph = createGraph(); /* ... add nodes/links ... */
+  // const layout = createLayout(graph); // 2D layout by default
+  // console.log('Layout created via ESM from CDN');
 </script>
 ```
+**Note on ESM externals:** The `mgraph.forcelayout.esm.js` build has external dependencies (e.g., `mgraph.events`, `mgraph.merge`, `mgraph.random`). When using it directly from a CDN like unpkg, these dependencies must also be resolvable, often by importing them from their respective unpkg URLs if they are also published as ES modules, or by using import maps. For simpler standalone browser usage, the UMD version might be easier.
 
-Or with UMD (global variable):
+**2. UMD (via global variable)**
+
+This version bundles its core dependencies and is often simpler for quick demos.
 
 ```html
+<script src="https://unpkg.com/mgraph.graph/dist/mgraph.graph.umd.min.js"></script> <!-- If needed for graph creation -->
 <script src="https://unpkg.com/mgraph.forcelayout/dist/mgraph.forcelayout.umd.min.js"></script>
 <script>
-  const layout = mgraphCreateLayout(graph);
+  // const graph = mgraph.createGraph(); /* ... add nodes/links ... */
+  // const layout = mgraphCreateLayout(graph); // 2D layout by default
+  // console.log('Layout created via UMD global from CDN');
+
+  // This mgraphCreateLayout global provides the same 2D-by-default functionality
+  // as ngraphCreate2dLayout from previous ngraph.forcelayout versions.
+  // To get a 3D layout:
+  // const layout3D = mgraphCreateLayout(graph, { dimensions: 3 });
 </script>
 ```
 
